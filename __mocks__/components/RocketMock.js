@@ -1,27 +1,35 @@
-import '../styles/Rocket.css';
 import PropTypes from 'prop-types';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { buttonReducer } from '../redux/rockets/RocketSlice';
-import getRockets from '../redux/rockets/RocketAPI';
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import { buttonReducer } from '../../src/redux/rockets/RocketSlice';
+import getRocketsMock from '../redux/rockets/RocketAPIMock';
 
-const Rocket = ({
-  id, imgURL, title, description,
+export const Rocket = ({
+  id,
+  imgURL,
+  title,
+  description,
 }) => {
-  const [buttonText, setButtonText] = useState('Reserve Rocket');
-  const [badge, setBadge] = useState(null);
-  const { reserveState } = useSelector((store) => store.rocket);
+  const [buttonText, setButtonText] = useState(
+    'Reserve Rocket',
+  );
+  const { reserveState } = useSelector(
+    (store) => store.rocket,
+  );
   const buttonRef = useRef(null);
-  const theBadge = useRef(null);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     reserveState.forEach((item) => {
       if (item.id === id) {
-        setBadge('Reserved');
-        theBadge.current.style.display = 'inline';
         setButtonText('Cancel Reservation');
-        buttonRef.current.classList.add('buttonCancel');
+        buttonRef.current.classList.add(
+          'buttonCancel',
+        );
       }
     });
   }, [id, reserveState]); // Added 'id' and 'reserveState' to dependency array
@@ -29,31 +37,24 @@ const Rocket = ({
   function setButton(e) {
     if (buttonText === 'Reserve Rocket') {
       setButtonText('Cancel Reservation');
-      setBadge('Reserved');
-      theBadge.current.style.display = 'inline';
-      dispatch(buttonReducer({ id, buttonText, title }));
+      dispatch(
+        buttonReducer({ id, buttonText, title }),
+      );
       e.target.classList.add('buttonCancel');
     } else {
       setButtonText('Reserve Rocket');
-      setBadge(null);
-      theBadge.current.style.display = 'none';
-      dispatch(buttonReducer({ id, buttonText, title }));
+      dispatch(
+        buttonReducer({ id, buttonText, title }),
+      );
       e.target.classList.remove('buttonCancel');
     }
   }
 
   return (
-    <div className="rocket-component">
+    <div className="rocketComponent">
       <img src={imgURL} alt="rocket" />
       <span>
-        <h3>
-          {' '}
-          <span ref={theBadge} className="reserveState">
-            {badge}
-          </span>
-          {' '}
-          {title}
-        </h3>
+        <h3>{title}</h3>
         <p>{description}</p>
         <button
           ref={buttonRef}
@@ -68,14 +69,14 @@ const Rocket = ({
   );
 };
 
-const RocketPage = () => {
+const MockRocketPage = () => {
   const dispatch = useDispatch();
-  const { content, info } = useSelector((store) => store.rocket);
+  const { content, info } = useSelector(
+    (store) => store.rocket,
+  );
   useEffect(() => {
-    if (content < 1) {
-      dispatch(getRockets());
-    }
-  }, [dispatch, content]);
+    dispatch(getRocketsMock());
+  }, [dispatch]);
 
   if (info === 'success') {
     return content.map((rocket) => (
@@ -102,4 +103,4 @@ Rocket.propTypes = {
   description: PropTypes.string.isRequired,
 };
 
-export default RocketPage;
+export default MockRocketPage;

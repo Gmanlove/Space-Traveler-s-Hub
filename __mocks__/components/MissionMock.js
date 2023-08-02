@@ -1,11 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { missionButtonReducer } from '../redux/missions/MissionSlice';
-import getMission from '../redux/missions/MissionAPI';
-import '../styles/Mission.css';
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import { missionButtonReducer } from '../../src/redux/missions/MissionSlice';
+import getMissionMock from '../redux/mission/MissionAPIMock';
 
-const Mission = ({
+export const Mission = ({
   id,
   mission,
   description,
@@ -16,7 +22,9 @@ const Mission = ({
   const [missionText, setMissionText] = useState(
     'Join Mission',
   );
-  const [status, setStatus] = useState('NOT A MEMBER');
+  const [status, setStatus] = useState(
+    'NOT A MEMBER',
+  );
   const { missionReserve } = useSelector(
     (store) => store.mission,
   );
@@ -25,8 +33,12 @@ const Mission = ({
       if (item.id === id) {
         setMissionText('Leave Mission');
         setStatus('ACTIVE MEMBER');
-        member.current.classList.add('activeMember');
-        buttonRef.current.classList.add('leaveMission');
+        member.current.classList.add(
+          'activeMember',
+        );
+        buttonRef.current.classList.add(
+          'leaveMission',
+        );
       }
     });
   }, [id, missionReserve]);
@@ -35,18 +47,30 @@ const Mission = ({
     if (missionText === 'Join Mission') {
       setMissionText('Leave Mission');
       setStatus('ACTIVE MEMBER');
-      member.current.classList.add('activeMember');
+      member.current.classList.add(
+        'activeMember',
+      );
       dispatch(
-        missionButtonReducer({ id, missionText, mission }),
+        missionButtonReducer({
+          id,
+          missionText,
+          mission,
+        }),
       );
       e.target.classList.add('leaveMission');
     } else {
       setMissionText('Join Mission');
       setStatus('NOT A MEMBER');
-      member.current.classList.remove('activeMember');
+      member.current.classList.remove(
+        'activeMember',
+      );
       e.target.classList.remove('leaveMission');
       dispatch(
-        missionButtonReducer({ id, missionText, mission }),
+        missionButtonReducer({
+          id,
+          missionText,
+          mission,
+        }),
       );
     }
   }
@@ -56,7 +80,9 @@ const Mission = ({
       <div className="data-row">
         <h3>{mission}</h3>
         <p>{description}</p>
-        <p ref={member} className="member">{status}</p>
+        <p ref={member} className="member">
+          {status}
+        </p>
         <button
           ref={buttonRef}
           className="missionButton"
@@ -78,12 +104,12 @@ Mission.propTypes = {
 
 const MissionPage = () => {
   const dispatch = useDispatch();
-  const { content } = useSelector((store) => store.mission);
+  const { content } = useSelector(
+    (store) => store.mission,
+  );
   useEffect(() => {
-    if (content.length < 1) {
-      dispatch(getMission());
-    }
-  }, [dispatch, content]);
+    dispatch(getMissionMock());
+  }, [dispatch]);
   return (
     <>
       <div className="titleRow">
